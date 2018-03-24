@@ -348,6 +348,12 @@ const AP_Param::GroupInfo QuadPlane::var_info2[] = {
     // @User: Standard
     AP_GROUPINFO("TRANS_DECEL", 1, QuadPlane, transition_decel, 2.0),
 
+	// @Param: TILT_WINGS_FWD
+    // @DisplayName: Wing tilt correction term.
+    // @Description: Correction term for the tilt of the wings. Zero indicates the point in which the wings point straight up. 1 indicates the maximum servo range. The wings should point forward after calibrating this term in manual mode.
+    // @Range: 0 1
+    AP_GROUPINFO("TILT_YAW_ANGLE", 2, QuadPlane, tilt.tilt_wings_fwd, 0),
+	
     AP_GROUPEND
 };
 

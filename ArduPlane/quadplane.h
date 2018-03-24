@@ -376,6 +376,7 @@ private:
         float current_tilt;
         float current_throttle;
         bool motors_active:1;
+		float tilt_wings_fwd;
     } tilt;
 
     enum tailsitter_input {
