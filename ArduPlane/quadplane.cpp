@@ -354,6 +354,92 @@ const AP_Param::GroupInfo QuadPlane::var_info2[] = {
     // @Range: 0 1
     AP_GROUPINFO("TILT_WINGS_FWD", 2, QuadPlane, tilt.tilt_wings_fwd, 1.0),
 	
+	// @Param: REMAP_YAW_MA
+    // @DisplayName: Yaw Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_YAW_MA", 3, QuadPlane, remap.yaw_mask_a, 0),
+	
+	// @Param: REMAP_YAW_PA
+    // @DisplayName: Gain for Yaw remap.
+    // @Description: Yaw output will be multiplied by this value before being added to motor output.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_YAW_PA", 4, QuadPlane, remap.yaw_P_a, 1.0),
+
+	// @Param: REMAP_YAW_MB
+    // @DisplayName: Yaw Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_YAW_MB", 5, QuadPlane, remap.yaw_mask_b, 0),
+	
+	// @Param: REMAP_YAW_PB
+    // @DisplayName: Gain for Yaw remap.
+    // @Description: Yaw output will be multiplied by this value before being added to TiltMotorRight.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_YAW_PB", 6, QuadPlane, remap.yaw_P_b, 1.0),
+	
+	// @Param: REMAP_FLAP_P
+    // @DisplayName: Gain for right flaperon remap.
+    // @Description: Flaperon output will be multiplied by this value before being added to motor output.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_FLAP_P", 7, QuadPlane, remap.flap_P, 1.0),
+	
+	// @Param: REMAP_AIL_P
+    // @DisplayName: Gain for left flaperon remap.
+    // @Description: Flaperon output will be multiplied by this value before being added to TiltMotorLeft.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_AIL_P", 8, QuadPlane, remap.aileron_P, 1.0),
+	
+	// @Param: REMAP_ELEV_PA
+    // @DisplayName: Gain for elevator remap.
+    // @Description: Elevator output will be multiplied by this value before being added to TiltMotorLeft and TiltMotorRight.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_ELEV_PA", 9, QuadPlane, remap.elevator_P_a, 1.0),
+	
+	// @Param: REMAP_ELEV_PB
+    // @DisplayName: Gain for elevator remap.
+    // @Description: Elevator output will be multiplied by this value before being added to TiltMotors.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_ELEV_PB", 10, QuadPlane, remap.elevator_P_b, 1.0),
+	
+	
+	
+	// @Param: REMAP_PIT_MA
+    // @DisplayName: Yaw Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_PIT_MA", 11, QuadPlane, remap.pitch_mask_a, 0),
+	
+	// @Param: REMAP_PIT_PA
+    // @DisplayName: Gain for Yaw remap.
+    // @Description: Yaw output will be multiplied by this value before being added to motor output.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_PIT_PA", 12, QuadPlane, remap.pitch_P_a, 1.0),
+
+	// @Param: REMAP_PIT_MB
+    // @DisplayName: Yaw Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_PIT_MB", 13, QuadPlane, remap.pitch_mask_b, 0),
+	
+	// @Param: REMAP_PIT_PB
+    // @DisplayName: Gain for Yaw remap.
+    // @Description: Yaw output will be multiplied by this value before being added to motor output.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_PIT_PB", 14, QuadPlane, remap.pitch_P_b, 1.0),
+	
+	// @Param: REMAP_ENABLE
+    // @DisplayName: Enable Controller Remap
+    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_ENABLE", 15, QuadPlane, remap.enable, 0),
+	
+	
+	
+	
+	
+	
+	
     AP_GROUPEND
 };
 

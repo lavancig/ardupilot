@@ -378,6 +378,25 @@ private:
         bool motors_active:1;
 		AP_Float tilt_wings_fwd;
     } tilt;
+	
+	struct {
+		AP_Int16 enable;
+		
+        AP_Int16 yaw_mask_a;
+		AP_Int16 yaw_mask_b;
+		AP_Float yaw_P_a;
+		AP_Float yaw_P_b;
+		
+		AP_Int16 pitch_mask_a;
+		AP_Int16 pitch_mask_b;
+		AP_Float pitch_P_a;
+		AP_Float pitch_P_b;
+		
+        AP_Float flap_P;
+		AP_Float aileron_P;
+		AP_Float elevator_P_a;
+		AP_Float elevator_P_b;		
+    } remap;
 
     enum tailsitter_input {
         TAILSITTER_INPUT_MULTICOPTER = 0,
@@ -416,6 +435,7 @@ private:
     uint32_t last_vtol_mode_ms;
     
     void tiltrotor_slew(float tilt);
+	void tiltrotor_slew_elevator(float newtilt);
     void tiltrotor_binary_slew(bool forward);
     void tiltrotor_update(void);
     void tiltrotor_continuous_update(void);
@@ -424,6 +444,7 @@ private:
     void tilt_compensate_up(float *thrust, uint8_t num_motors);
     void tilt_compensate_down(float *thrust, uint8_t num_motors);
     void tilt_compensate(float *thrust, uint8_t num_motors);
+	void no_tilt_compensation(float *thrust, uint8_t num_motors);
     bool is_motor_tilting(uint8_t motor) const {
         return (((uint8_t)tilt.tilt_mask.get()) & (1U<<motor));
     }

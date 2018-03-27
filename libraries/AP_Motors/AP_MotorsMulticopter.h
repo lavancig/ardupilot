@@ -85,6 +85,7 @@ public:
     // mask. This is used to control tiltrotor motors in forward
     // flight. Thrust is in the range 0 to 1
     virtual void        output_motor_mask(float thrust, uint8_t mask);
+	void 				output_motor_mask_not_intrusive(float thrust, uint8_t mask);
 
     // get minimum or maximum pwm value that can be output to motors
     int16_t             get_pwm_output_min() const;
