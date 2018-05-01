@@ -109,6 +109,7 @@ void QuadPlane::tiltrotor_continuous_update(void)
 				
 				float rudder_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_rudder)/4500.0, -1, 1);
 				float elevator_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1);
+				float aileron_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_aileron)/4500.0, -1, 1);
 				
 				uint8_t mask = 0x01;
 				float output_throttle = 0;
@@ -122,7 +123,9 @@ void QuadPlane::tiltrotor_continuous_update(void)
 										((mask & (uint8_t)remap.yaw_mask_a)?1.0:0.0) * remap.yaw_P_a * rudder_out + 
 										((mask & (uint8_t)remap.yaw_mask_b)?1.0:0.0) * remap.yaw_P_b * rudder_out + 
 										((mask & (uint8_t)remap.pitch_mask_a)?1.0:0.0) * remap.pitch_P_a * elevator_out + 
-										((mask & (uint8_t)remap.pitch_mask_b)?1.0:0.0) * remap.pitch_P_b * elevator_out
+										((mask & (uint8_t)remap.pitch_mask_b)?1.0:0.0) * remap.pitch_P_b * elevator_out +
+										((mask & (uint8_t)remap.roll_mask_a)?1.0:0.0) * remap.roll_P_a * aileron_out + 
+										((mask & (uint8_t)remap.roll_mask_b)?1.0:0.0) * remap.roll_P_b * aileron_out
 										,0
 										,1);
 					motors->output_motor_mask_not_intrusive(output_throttle, mask);

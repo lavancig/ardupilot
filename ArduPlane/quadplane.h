@@ -392,6 +392,11 @@ private:
 		AP_Float pitch_P_a;
 		AP_Float pitch_P_b;
 		
+		AP_Int16 roll_mask_a;
+		AP_Int16 roll_mask_b;
+		AP_Float roll_P_a;
+		AP_Float roll_P_b;
+		
         AP_Float flap_P;
 		AP_Float aileron_P;
 		AP_Float elevator_P_a;

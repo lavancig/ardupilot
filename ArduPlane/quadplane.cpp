@@ -405,34 +405,61 @@ const AP_Param::GroupInfo QuadPlane::var_info2[] = {
 	
 	
 	// @Param: REMAP_PIT_MA
-    // @DisplayName: Yaw Remap Mask
-    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @DisplayName: Pitch Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the Pitch output.
     // @User: Standard
     AP_GROUPINFO("REMAP_PIT_MA", 11, QuadPlane, remap.pitch_mask_a, 0),
 	
 	// @Param: REMAP_PIT_PA
-    // @DisplayName: Gain for Yaw remap.
-    // @Description: Yaw output will be multiplied by this value before being added to motor output.
+    // @DisplayName: Gain for Pitch remap.
+    // @Description: Pitch output will be multiplied by this value before being added to motor output.
     // @Range: 0 1
     AP_GROUPINFO("REMAP_PIT_PA", 12, QuadPlane, remap.pitch_P_a, 1.0),
 
 	// @Param: REMAP_PIT_MB
-    // @DisplayName: Yaw Remap Mask
-    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @DisplayName: Pitch Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the Pitch output.
     // @User: Standard
     AP_GROUPINFO("REMAP_PIT_MB", 13, QuadPlane, remap.pitch_mask_b, 0),
 	
 	// @Param: REMAP_PIT_PB
-    // @DisplayName: Gain for Yaw remap.
-    // @Description: Yaw output will be multiplied by this value before being added to motor output.
+    // @DisplayName: Gain for Pitch remap.
+    // @Description: Pitch output will be multiplied by this value before being added to motor output.
     // @Range: 0 1
     AP_GROUPINFO("REMAP_PIT_PB", 14, QuadPlane, remap.pitch_P_b, 1.0),
 	
 	// @Param: REMAP_ENABLE
     // @DisplayName: Enable Controller Remap
-    // @Description: This is a bitmask of motors that will have their output added by the yaw output.
+    // @Description: This is a bitmask of motors that will have their output added by the Pitch output.
     // @User: Standard
     AP_GROUPINFO("REMAP_ENABLE", 15, QuadPlane, remap.enable, 0),
+	
+	
+	
+		// @Param: REMAP_RLL_MA
+    // @DisplayName: Pitch Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the Roll output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_RLL_MA", 16, QuadPlane, remap.roll_mask_a, 0),
+	
+	// @Param: REMAP_RLL_PA
+    // @DisplayName: Gain for Roll remap.
+    // @Description: Roll output will be multiplied by this value before being added to motor output.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_RLL_PA", 17, QuadPlane, remap.roll_P_a, 1.0),
+
+	// @Param: REMAP_RLL_MB
+    // @DisplayName: Roll Remap Mask
+    // @Description: This is a bitmask of motors that will have their output added by the Roll output.
+    // @User: Standard
+    AP_GROUPINFO("REMAP_RLL_MB", 18, QuadPlane, remap.roll_mask_b, 0),
+	
+	// @Param: REMAP_RLL_PB
+    // @DisplayName: Gain for Roll remap.
+    // @Description: Roll output will be multiplied by this value before being added to motor output.
+    // @Range: 0 1
+    AP_GROUPINFO("REMAP_RLL_PB", 19, QuadPlane, remap.roll_P_b, 1.0),
+	
 	
 	
 	
