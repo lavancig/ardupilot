@@ -460,7 +460,11 @@ const AP_Param::GroupInfo QuadPlane::var_info2[] = {
     // @Range: 0 1
     AP_GROUPINFO("REMAP_RLL_PB", 19, QuadPlane, remap.roll_P_b, 1.0),
 	
-	
+	// @Param: TILT_BACK_FWD
+    // @DisplayName: Backrotor tilt correction term.
+    // @Description: Correction term for the tilt of the backrotor. Zero indicates the point in which the backrotor point straight up. 1 indicates the maximum servo range. The backrotor should point forward after calibrating this term in manual mode.
+    // @Range: 0 1
+    AP_GROUPINFO("TILT_BACK_FWD", 20, QuadPlane, tilt.tilt_back_fwd, 1.0),
 	
 	
 	
