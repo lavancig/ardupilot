@@ -377,6 +377,7 @@ private:
         float current_throttle;
         bool motors_active:1;
 		AP_Float tilt_wings_fwd;
+		AP_Float tilt_back_fwd;
     } tilt;
 	
 	struct {
