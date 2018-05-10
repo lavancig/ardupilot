@@ -187,7 +187,13 @@ void QuadPlane::tiltrotor_continuous_update(void)
         // Q_TILT_MAX. Below 50% throttle we decrease linearly. This
         // relies heavily on Q_VFWD_GAIN being set appropriately.
         float settilt = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_throttle) / 50.0f, 0, 1);
-        tiltrotor_slew(settilt * tilt.max_angle_deg / 90.0f);
+		if(remap.enable) {
+			tiltrotor_slew_elevator(settilt * tilt.max_angle_deg / 90.0f);
+		}
+		else{
+			tiltrotor_slew(settilt * tilt.max_angle_deg / 90.0f);
+		}
+        
     }
 }
 
