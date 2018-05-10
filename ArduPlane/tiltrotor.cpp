@@ -60,7 +60,7 @@ void QuadPlane::tiltrotor_slew_elevator(float newtilt)
 	
     tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt-max_change, tilt.current_tilt+max_change);
 
-	tilt_output = constrain_float(tilt.current_tilt + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1), 0, 1);
+	tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1), 0, 1);
 	
     // translate to 0..1000 range and output
     SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
