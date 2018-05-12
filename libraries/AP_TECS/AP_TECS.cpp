@@ -238,6 +238,13 @@ const AP_Param::GroupInfo AP_TECS::var_info[] = {
     // @Values: 0:Disable,1:Enable
     // @User: Advanced
     AP_GROUPINFO("SYNAIRSPEED", 27, AP_TECS, _use_synthetic_airspeed, 0),
+	
+	// @Param: ALLOWVTOL
+    // @DisplayName: Enable the use of TECS prioritization in VTOL mode
+    // @Description: 
+    // @Values: 0:Disable,1:Enable
+    // @User: Advanced
+    AP_GROUPINFO("ALLOWVTOL", 28, AP_TECS, allow_vtol, 0),
     
     AP_GROUPEND
 };
@@ -777,9 +784,9 @@ void AP_TECS::_update_pitch(void)
     // A SKE_weighting of 2 provides 100% priority to speed control. This is used when an underspeed condition is detected. In this instance, if airspeed
     // rises above the demanded value, the pitch angle will be increased by the TECS controller.
     float SKE_weighting = constrain_float(_spdWeight, 0.0f, 2.0f);
-    if (!_ahrs.airspeed_sensor_enabled()) {
+    if (!_ahrs.airspeed_sensor_enabled() && !_use_synthetic_airspeed) {
         SKE_weighting = 0.0f;
-    } else if (_flight_stage == AP_Vehicle::FixedWing::FLIGHT_VTOL) {
+    } else if (_flight_stage == AP_Vehicle::FixedWing::FLIGHT_VTOL && !allow_vtol) {
         // if we are in VTOL mode then control pitch without regard to
         // speed. Speed is also taken care of independently of
         // height. This is needed as the usual relationship of speed

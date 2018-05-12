@@ -55,12 +55,23 @@ void QuadPlane::tiltrotor_slew(float newtilt)
  */
 void QuadPlane::tiltrotor_slew_elevator(float newtilt)
 {
-    float max_change = tilt_max_change(newtilt<tilt.current_tilt);
+    float max_change_wing = tilt_max_change(newtilt<tilt.current_tilt);
+	float max_change_tail = tilt_max_change(newtilt<tilt.tail_tilt);
 	float tilt_output = 0;
-	
-    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt-max_change, tilt.current_tilt+max_change);
 
-	tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1), 0, 1);
+	if(tilt.current_tilt >= 1 && tilt.tail_tilt >= tilt.max_angle_deg / 90.0f ){
+		tilt.tail_tilt += constrain_float(newtilt-tilt.tail_tilt, -max_change_tail, max_change_tail);
+	}
+	else if(tilt.current_tilt >= tilt.max_angle_deg / 90.0f){
+		tilt.current_tilt += constrain_float(newtilt-tilt.current_tilt, -max_change_wing, max_change_wing);
+	}
+	else{
+		tilt.current_tilt += constrain_float(newtilt-tilt.current_tilt, -max_change_wing, max_change_wing);
+		tilt.tail_tilt += constrain_float(newtilt-tilt.tail_tilt, -max_change_tail, max_change_tail);
+	}
+	
+	
+	tilt_output = constrain_float(tilt.tail_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1), 0, 1);
 	
     // translate to 0..1000 range and output
     SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
@@ -109,6 +120,8 @@ void QuadPlane::tiltrotor_continuous_update(void)
 				
 				float rudder_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_rudder)/4500.0, -1, 1);
 				float elevator_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1);
+				if(elevator_out < 0)
+					elevator_out = -elevator_out;
 				float aileron_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_aileron)/4500.0, -1, 1);
 				
 				uint8_t mask = 0x01;
@@ -167,7 +180,12 @@ void QuadPlane::tiltrotor_continuous_update(void)
     */
     if (plane.control_mode == QSTABILIZE ||
         plane.control_mode == QHOVER) {
-        tiltrotor_slew(0);
+		if(remap.enable) {
+			tiltrotor_slew_elevator(0);
+		}
+		else{
+			tiltrotor_slew(0);
+		}
         return;
     }
 

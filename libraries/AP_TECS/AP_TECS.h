@@ -328,6 +328,8 @@ private:
     } logging;
 
     AP_Int8 _use_synthetic_airspeed;
+	
+	AP_Int8 allow_vtol;
     
     // use synthetic airspeed for next loop
     bool _use_synthetic_airspeed_once;

@@ -374,6 +374,7 @@ private:
         AP_Int8  tilt_type;
         AP_Float tilt_yaw_angle;
         float current_tilt;
+		float tail_tilt;
         float current_throttle;
         bool motors_active:1;
 		AP_Float tilt_wings_fwd;
