@@ -28,7 +28,9 @@ public:
 
     // return 0 motor mask
     uint16_t get_motor_mask() { return 0; }
-
+	
+	float get_thrust_rear(void);
+	
 protected:
     // calculate motor outputs
     void output_armed_stabilizing();

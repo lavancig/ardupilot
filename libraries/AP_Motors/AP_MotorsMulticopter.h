@@ -38,6 +38,8 @@ public:
 
     // output - sends commands to the motors
     virtual void        output();
+	
+	virtual float        get_thrust_rear()=0;
 
     // output_min - sends minimum values out to the motors
     void                output_min();

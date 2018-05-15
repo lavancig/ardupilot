@@ -325,3 +325,8 @@ void AP_MotorsTri::output_motor_mask(float thrust, uint8_t mask)
     // and override yaw servo
     rc_write(AP_MOTORS_CH_TRI_YAW, _yaw_servo->get_trim());
 }
+
+float AP_MotorsTri::get_thrust_rear(void){
+	return _thrust_rear;
+}
+    

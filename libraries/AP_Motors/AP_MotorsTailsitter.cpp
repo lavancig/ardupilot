@@ -122,3 +122,7 @@ void AP_MotorsTailsitter::output_armed_stabilizing()
     _throttle = constrain_float(_throttle, 0.1, 1);
 }
 
+float AP_MotorsTailsitter::get_thrust_rear(void){
+	return 0.;
+}
+

@@ -466,7 +466,17 @@ const AP_Param::GroupInfo QuadPlane::var_info2[] = {
     // @Range: 0 1
     AP_GROUPINFO("TILT_BACK_FWD", 20, QuadPlane, tilt.tilt_back_fwd, 1.0),
 	
+	// @Param: TILT_LATE_TAI
+    // @DisplayName: Keeps tail with drone controller until transition is complete (wings Forwared)
+    // @Description: 
+    // @Range: 0 1
+    AP_GROUPINFO("TILT_LATE_TAI", 21, QuadPlane, late_tail, 0),
 	
+	// @Param: TRANS_SCALE
+    // @DisplayName: Scales throttle during transition to plane mode.
+    // @Description: 
+    // @Range: 0 1
+    AP_GROUPINFO("TRANS_SCALE", 22, QuadPlane, scale_throttle, 1),	
 	
 	
 	
@@ -1402,7 +1412,12 @@ void QuadPlane::update_transition(void)
         plane.rollController.reset_I();
 
         // give full authority to attitude control
-        attitude_control->set_throttle_mix_max();
+        //attitude_control->set_throttle_mix_max();
+		attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(plane.nav_roll_cd,
+                                                                  plane.nav_pitch_cd,
+                                                                  get_desired_yaw_rate_cds());
+
+		
         break;
     }
         
@@ -1418,10 +1433,6 @@ void QuadPlane::update_transition(void)
         float transition_scale = (trans_time_ms - (millis() - transition_start_ms)) / trans_time_ms;
         float throttle_scaled = last_throttle * transition_scale;
 
-        // set zero throttle mix, to give full authority to
-        // throttle. This ensures that the fixed wing controllers get
-        // a chance to learn the right integrators during the transition
-        attitude_control->set_throttle_mix_value(0.5*transition_scale);
 
         if (throttle_scaled < 0.01) {
             // ensure we don't drop all the way to zero or the motors
@@ -1429,9 +1440,25 @@ void QuadPlane::update_transition(void)
             throttle_scaled = 0.01;
         }
         assisted_flight = true;
-        hold_stabilize(throttle_scaled);
+        if(scale_throttle){
+			hold_stabilize(throttle_scaled);
+		}else{
+			hold_stabilize(last_throttle);
+		}
         run_rate_controller();
         motors_output();
+
+        // set zero throttle mix, to give full authority to
+        // throttle. This ensures that the fixed wing controllers get
+        // a chance to learn the right integrators during the transition
+        //attitude_control->set_throttle_mix_value(0.5*transition_scale);
+		//attitude_control->set_throttle_mix_max();
+		attitude_control->input_euler_angle_roll_pitch_euler_rate_yaw(	plane.nav_roll_cd,
+																		plane.nav_pitch_cd,
+																		get_desired_yaw_rate_cds());
+
+		
+		
         break;
     }
 
@@ -1463,6 +1490,12 @@ void QuadPlane::update_transition(void)
             motors->set_desired_spool_state(AP_Motors::DESIRED_SHUT_DOWN);
             motors->output();
         }
+		if(late_tail && tilt.current_tilt < 1){
+			hold_stabilize(last_throttle);
+			run_rate_controller();
+		}
+		assisted_flight = false;
+		
         break;
     }
 }

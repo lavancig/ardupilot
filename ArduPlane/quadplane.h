@@ -1,4 +1,5 @@
 #include <AP_Motors/AP_Motors.h>
+#include <AP_Motors/AP_MotorsTailsitter.h>
 #include <AC_PID/AC_PID.h>
 #include <AC_AttitudeControl/AC_AttitudeControl_Multi.h> // Attitude control library
 #include <AP_InertialNav/AP_InertialNav.h>
@@ -452,6 +453,11 @@ private:
     void tilt_compensate_down(float *thrust, uint8_t num_motors);
     void tilt_compensate(float *thrust, uint8_t num_motors);
 	void no_tilt_compensation(float *thrust, uint8_t num_motors);
+	
+	
+	void tiltrotor_slew_QSTABILIZE(float newtilt);
+	
+	
     bool is_motor_tilting(uint8_t motor) const {
         return (((uint8_t)tilt.tilt_mask.get()) & (1U<<motor));
     }
@@ -467,6 +473,7 @@ private:
     // adjust altitude target smoothly
     void adjust_alt_target(float target_cm);
 
+    // additional options
     // additional options
     AP_Int32 options;
     enum {
@@ -484,6 +491,10 @@ private:
       return true if current mission item is a vtol landing
      */
     bool is_vtol_land(uint16_t id) const;
+	
+	AP_Int8 late_tail;
+	
+	AP_Int8 scale_throttle;
     
 public:
     void motor_test_output();

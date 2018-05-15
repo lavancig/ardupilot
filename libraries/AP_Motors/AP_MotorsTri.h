@@ -48,6 +48,8 @@ public:
     // mask. This is used to control tiltrotor motors in forward
     // flight. Thrust is in the range 0 to 1
     void                output_motor_mask(float thrust, uint8_t mask) override;
+	
+	float get_thrust_rear(void);
     
 protected:
     // output - sends commands to the motors
