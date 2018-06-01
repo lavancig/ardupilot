@@ -103,6 +103,30 @@ void AP_MotorsTri::output_to_motors()
             break;
     }
 }
+// Update tail motor PWM only
+
+void AP_MotorsTri::output_to_tail()
+{
+    switch (_spool_mode) {
+        case SHUT_DOWN:
+            // sends minimum values out to the motors
+            rc_write(AP_MOTORS_MOT_4, get_pwm_output_min());
+            break;
+        case SPIN_WHEN_ARMED:
+            // sends output to motors when armed but not flying
+            rc_write(AP_MOTORS_MOT_4, calc_spin_up_to_pwm());
+            break;
+        case SPOOL_UP:
+        case THROTTLE_UNLIMITED:
+        case SPOOL_DOWN:
+            // set motor output based on thrust requests
+            rc_write(AP_MOTORS_MOT_4, calc_thrust_to_pwm(_thrust_rear));
+            break;
+    }
+}
+
+
+
 
 // get_motor_mask - returns a bitmask of which outputs are being used for motors or servos (1 means being used)
 //  this can be used to ensure other pwm outputs (i.e. for servos) do not conflict

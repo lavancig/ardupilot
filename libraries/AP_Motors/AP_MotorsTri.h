@@ -50,6 +50,8 @@ public:
     void                output_motor_mask(float thrust, uint8_t mask) override;
 	
 	float get_thrust_rear(void);
+	
+	virtual void output_to_tail();
     
 protected:
     // output - sends commands to the motors

@@ -201,6 +201,7 @@ private:
 
     bool should_relax(void);
     void motors_output(void);
+	void tail_motor_output(void);
     void Log_Write_QControl_Tuning();
     float landing_descent_rate_cms(float height_above_ground);
     

@@ -1490,7 +1490,7 @@ void QuadPlane::update_transition(void)
             motors->set_desired_spool_state(AP_Motors::DESIRED_SHUT_DOWN);
             motors->output();
         }
-		if(late_tail && tilt.current_tilt < 1){
+		if(late_tail && tilt.tail_tilt < 0.8){
 			hold_stabilize(last_throttle);
 			run_rate_controller();
 		}
@@ -1691,6 +1691,51 @@ void QuadPlane::motors_output(void)
     check_throttle_suppression();
     
     motors->output();
+    if (motors->armed()) {
+        plane.DataFlash.Log_Write_Rate(plane.ahrs, *motors, *attitude_control, *pos_control);
+        Log_Write_QControl_Tuning();
+        const uint32_t now = AP_HAL::millis();
+        if (now - last_ctrl_log_ms > 100) {
+            attitude_control->control_monitor_log();
+        }
+    }
+
+    // remember when motors were last active for throttle suppression
+    if (motors->get_throttle() > 0.01f || tilt.motors_active) {
+        last_motors_active_ms = AP_HAL::millis();
+    }
+    
+}
+
+
+/*
+  output motors and do any copter needed
+ */
+void QuadPlane::tail_motor_output(void)
+{
+    if (!hal.util->get_soft_armed() || plane.afs.should_crash_vehicle()) {
+        motors->set_desired_spool_state(AP_Motors::DESIRED_SHUT_DOWN);
+        motors->output_tail();
+        return;
+    }
+    if (esc_calibration && AP_Notify::flags.esc_calibration && plane.control_mode == QSTABILIZE) {
+        // output is direct from run_esc_calibration()
+        return;
+    }
+
+    if (in_tailsitter_vtol_transition()) {
+        /*
+          don't run the motor outputs while in tailsitter->vtol
+          transition. That is taken care of by the fixed wing
+          stabilisation code
+         */
+        return;
+    }
+
+    // see if motors should be shut down
+    check_throttle_suppression();
+    
+    motors->output_tail();
     if (motors->armed()) {
         plane.DataFlash.Log_Write_Rate(plane.ahrs, *motors, *attitude_control, *pos_control);
         Log_Write_QControl_Tuning();

@@ -38,6 +38,8 @@ public:
 
     // output - sends commands to the motors
     virtual void        output();
+	// sends commands to the tail only
+	virtual void 		output_tail();
 	
 	virtual float        get_thrust_rear()=0;
 
@@ -109,6 +111,7 @@ protected:
 
     // output_to_motors - sends commands to the motors
     virtual void        output_to_motors() = 0;
+	virtual void        output_to_tail() = 0;
 
     // update the throttle input filter
     virtual void        update_throttle_filter();

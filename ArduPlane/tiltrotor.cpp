@@ -167,9 +167,8 @@ void QuadPlane::tiltrotor_continuous_update(void)
 						mask = mask << 1;
 						continue;
 					}
-					else if(late_tail && motor_class == AP_Motors::MOTOR_FRAME_TRI && i == 3 && tilt.current_tilt < 1){
-						output_throttle = motors->get_thrust_rear();
-						motors->output_motor_mask_not_intrusive(output_throttle, mask);		
+					else if(late_tail && motor_class == AP_Motors::MOTOR_FRAME_TRI && i == 3 && tilt.tail_tilt < 0.8){
+						tail_motor_output();
 						mask = mask << 1;
 						continue;
 					}
