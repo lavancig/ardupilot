@@ -67,6 +67,8 @@ protected:
     void                thrust_compensation(void) override;
 	
 	float get_thrust_rear(void);
+	
+	virtual void output_to_tail();
     
     float               _roll_factor[AP_MOTORS_MAX_NUM_MOTORS]; // each motors contribution to roll
     float               _pitch_factor[AP_MOTORS_MAX_NUM_MOTORS]; // each motors contribution to pitch

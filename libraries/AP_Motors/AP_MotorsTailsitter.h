@@ -31,6 +31,8 @@ public:
 	
 	float get_thrust_rear(void);
 	
+	virtual void output_to_tail();
+	
 protected:
     // calculate motor outputs
     void output_armed_stabilizing();
