@@ -13,7 +13,7 @@ float Plane::get_speed_scaler(void)
             auto_state.highest_airspeed = aspeed;
         }
         if (aspeed > 0.0001f) {
-            speed_scaler = g.scaling_speed / aspeed / 100 * 15; // for aileron scaler
+            speed_scaler = g.scaling_speed / aspeed /100 * 15 // for aileron scaler;
         } else {
             speed_scaler = 1.0;
         }
