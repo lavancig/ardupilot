@@ -444,7 +444,6 @@ private:
     uint32_t last_vtol_mode_ms;
     
     void tiltrotor_slew(float tilt);
-	void tiltrotor_slew_elevator(float newtilt);
     void tiltrotor_binary_slew(bool forward);
     void tiltrotor_update(void);
     void tiltrotor_continuous_update(void);
@@ -457,7 +456,7 @@ private:
 	
 	
 	void tiltrotor_slew_QSTABILIZE(float newtilt);
-	
+	void tiltrotor_slew_elevator(float newtilt);
 	
     bool is_motor_tilting(uint8_t motor) const {
         return (((uint8_t)tilt.tilt_mask.get()) & (1U<<motor));

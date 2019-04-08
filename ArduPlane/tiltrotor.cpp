@@ -82,6 +82,7 @@ void QuadPlane::tiltrotor_slew_elevator(float newtilt)
     // setup tilt compensation
     motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensate, void, float *, uint8_t));
 }
+
 /*
   output a slew limited tiltrotor angle. Elevator output is added to tilt. tilt is from 0 to 1. for horizontral flight
 
@@ -98,11 +99,13 @@ void QuadPlane::tiltrotor_slew_elevator(float newtilt)
     // setup tilt compensation
     motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensate, void, float *, uint8_t));
 }
-*/
 
+output a slew limited tiltrotor angle. tilt is from 0 to 1.for_no_tilt_compensateuntil transition airspeed wait.
+*/////어차피 threshold안넘어서 tilt_compensation 안돌아감.
 
+/*
   //output a slew limited tiltrotor angle. Elevator output is added to tilt. tilt is from 0 to 1.
- 
+*/
 void QuadPlane::tiltrotor_slew_QSTABILIZE(float newtilt)
 {
     float max_change_wing = tilt_max_change(newtilt<tilt.current_tilt);
@@ -121,7 +124,6 @@ void QuadPlane::tiltrotor_slew_QSTABILIZE(float newtilt)
 	}/*
     float max_change = tilt_max_change(newtilt<tilt.current_tilt);
     float tilt_output = 0;
-
     tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt - max_change, tilt.current_tilt + max_change);*/
     tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd, 0, 1);
 
@@ -130,25 +132,6 @@ void QuadPlane::tiltrotor_slew_QSTABILIZE(float newtilt)
 
     // setup tilt compensation
     motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::tilt_compensate, void, float *, uint8_t));
-}
-
-/*
-output a slew limited tiltrotor angle. tilt is from 0 to 1.for_no_tilt_compensateuntil transition airspeed wait.
-*/////어차피 threshold안넘어서 tilt_compensation 안돌아감.
-
-void QuadPlane::tiltrotor_slew_transition(float newtilt)
-{
-    float max_change = tilt_max_change(newtilt<tilt.current_tilt);
-    float tilt_output = 0;
-
-    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt - max_change, tilt.current_tilt + max_change);
-    tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd, 0, 1);
-
-    // translate to 0..1000 range and output
-    SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
-
-    // setup tilt compensation
-    motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensate, void, float *, uint8_t));
 }
 
 /*
