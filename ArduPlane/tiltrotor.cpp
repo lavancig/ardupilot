@@ -40,7 +40,14 @@ float QuadPlane::tilt_max_change(bool up)
 void QuadPlane::tiltrotor_slew(float newtilt)
 {
     float max_change = tilt_max_change(newtilt<tilt.current_tilt);
-    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt-max_change, tilt.current_tilt+max_change);
+    // tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt-max_change, tilt.current_tilt+max_change);
+
+    if (tilt.current_tilt >= tilt.max_angle_deg / 90.0f) {
+        tilt.current_tilt += constrain_float(newtilt - tilt.current_tilt, -max_change, max_change);
+    }
+    else {
+        tilt.current_tilt += constrain_float(newtilt - tilt.current_tilt, -max_change, max_change);
+    }
 
     // translate to 0..1000 range and output
     SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt.current_tilt);
@@ -49,40 +56,53 @@ void QuadPlane::tiltrotor_slew(float newtilt)
     motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::tilt_compensate, void, float *, uint8_t));
 }
 
-
-/*
-  output a slew limited tiltrotor angle. Elevator output is added to tilt. tilt is from 0 to 1.
- */
 void QuadPlane::tiltrotor_slew_elevator(float newtilt)
 {
-    float max_change_wing = tilt_max_change(newtilt<tilt.current_tilt);
-	float max_change_tail = tilt_max_change(newtilt<tilt.tail_tilt);
-	float tilt_output = 0;
+    float max_change_wing = tilt_max_change(newtilt < tilt.current_tilt);
+    float max_change_tail = tilt_max_change(newtilt < tilt.tail_tilt);
+    float tilt_output = 0;
 
-	if(tilt.current_tilt >= 1 && tilt.tail_tilt >= tilt.max_angle_deg / 90.0f ){
-		tilt.tail_tilt += constrain_float(newtilt-tilt.tail_tilt, -max_change_tail, max_change_tail);
-	}
-	else if(tilt.current_tilt >= tilt.max_angle_deg / 90.0f){
-		tilt.current_tilt += constrain_float(newtilt-tilt.current_tilt, -max_change_wing, max_change_wing);
-	}
-	else{
-		tilt.current_tilt += constrain_float(newtilt-tilt.current_tilt, -max_change_wing, max_change_wing);
-		tilt.tail_tilt += constrain_float(newtilt-tilt.tail_tilt, -max_change_tail, max_change_tail);
-	}
-	
-	
-	tilt_output = constrain_float(tilt.tail_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1), 0, 1);
-	
+    if (tilt.current_tilt >= 1 && tilt.tail_tilt >= tilt.max_angle_deg / 90.0f) {
+        tilt.tail_tilt += constrain_float(newtilt - tilt.tail_tilt, -max_change_tail, max_change_tail);
+    }
+    else if (tilt.current_tilt >= tilt.max_angle_deg / 90.0f) {
+        tilt.current_tilt += constrain_float(newtilt - tilt.current_tilt, -max_change_wing, max_change_wing);
+    }
+    else {
+        tilt.current_tilt += constrain_float(newtilt - tilt.current_tilt, -max_change_wing, max_change_wing);
+        tilt.tail_tilt += constrain_float(newtilt - tilt.tail_tilt, -max_change_tail, max_change_tail);
+    }
+
+
+    tilt_output = constrain_float(tilt.tail_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) / 4500.0, -1, 1), 0, 1);
+
     // translate to 0..1000 range and output
     SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
 
     // setup tilt compensation
-    motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensation, void, float *, uint8_t));
+    motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensate, void, float *, uint8_t));
 }
-
 /*
-  output a slew limited tiltrotor angle. Elevator output is added to tilt. tilt is from 0 to 1.
- */
+  output a slew limited tiltrotor angle. Elevator output is added to tilt. tilt is from 0 to 1. for horizontral flight
+
+void QuadPlane::tiltrotor_slew_elevator(float newtilt)
+{
+    float max_change = tilt_max_change(newtilt<tilt.current_tilt);
+    float tilt_output = 0;
+
+    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt - max_change, tilt.current_tilt + max_change);
+    tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) / 4500.0, -1, 1), 0, 1);
+
+    // translate to 0..1000 range and output
+    SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
+    // setup tilt compensation
+    motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensate, void, float *, uint8_t));
+}
+*/
+
+
+  //output a slew limited tiltrotor angle. Elevator output is added to tilt. tilt is from 0 to 1.
+ 
 void QuadPlane::tiltrotor_slew_QSTABILIZE(float newtilt)
 {
     float max_change_wing = tilt_max_change(newtilt<tilt.current_tilt);
@@ -98,11 +118,13 @@ void QuadPlane::tiltrotor_slew_QSTABILIZE(float newtilt)
 	else{
 		tilt.current_tilt += constrain_float(newtilt-tilt.current_tilt, -max_change_wing, max_change_wing);
 		tilt.tail_tilt += constrain_float(newtilt-tilt.tail_tilt, -max_change_tail, max_change_tail);
-	}
-	
-	
-	tilt_output = constrain_float(tilt.tail_tilt * tilt.tilt_back_fwd, 0, 1);
-	
+	}/*
+    float max_change = tilt_max_change(newtilt<tilt.current_tilt);
+    float tilt_output = 0;
+
+    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt - max_change, tilt.current_tilt + max_change);*/
+    tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd, 0, 1);
+
     // translate to 0..1000 range and output
     SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
 
@@ -110,9 +132,43 @@ void QuadPlane::tiltrotor_slew_QSTABILIZE(float newtilt)
     motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::tilt_compensate, void, float *, uint8_t));
 }
 
+/*
+output a slew limited tiltrotor angle. tilt is from 0 to 1.for_no_tilt_compensateuntil transition airspeed wait.
+*/////어차피 threshold안넘어서 tilt_compensation 안돌아감.
 
+void QuadPlane::tiltrotor_slew_transition(float newtilt)
+{
+    float max_change = tilt_max_change(newtilt<tilt.current_tilt);
+    float tilt_output = 0;
 
+    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt - max_change, tilt.current_tilt + max_change);
+    tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd, 0, 1);
 
+    // translate to 0..1000 range and output
+    SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
+
+    // setup tilt compensation
+    motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::no_tilt_compensate, void, float *, uint8_t));
+}
+
+/*
+output a slew limited tiltrotor angle. for tilt_compensate with elevator output
+
+void QuadPlane::tiltrotor_slew_transition2(float newtilt)
+{
+    float max_change = tilt_max_change(newtilt<tilt.current_tilt);
+    float tilt_output = 0;
+
+    tilt.current_tilt = constrain_float(newtilt, tilt.current_tilt - max_change, tilt.current_tilt + max_change);
+    tilt_output = constrain_float(tilt.current_tilt * tilt.tilt_back_fwd + remap.elevator_P_b * constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator) / 4500.0, -1, 1), 0, 1);
+
+    // translate to 0..1000 range and output
+    SRV_Channels::set_output_scaled(SRV_Channel::k_motor_tilt, 1000 * tilt_output);
+
+    // setup tilt compensation
+    motors->set_thrust_compensation_callback(FUNCTOR_BIND_MEMBER(&QuadPlane::tilt_compensate, void, float *, uint8_t));
+}
+*/
 
 /*
   update motor tilt for continuous tilt servos
@@ -156,8 +212,8 @@ void QuadPlane::tiltrotor_continuous_update(void)
 				
 				float rudder_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_rudder)/4500.0, -1, 1);
 				float elevator_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_elevator)/4500.0, -1, 1);
-				if(elevator_out < 0)
-					elevator_out = -elevator_out;
+				//if(elevator_out < 0)
+				//	elevator_out = -elevator_out;
 				float aileron_out = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_aileron)/4500.0, -1, 1);
 				
 				uint8_t mask = 0x01;
@@ -167,15 +223,18 @@ void QuadPlane::tiltrotor_continuous_update(void)
 						mask = mask << 1;
 						continue;
 					}
-					else if(late_tail && motor_class == AP_Motors::MOTOR_FRAME_TRI && i == 3 && tilt.tail_tilt < 0.8){
-						tail_motor_output();
-						mask = mask << 1;
+                    else if (late_tail && motor_class == AP_Motors::MOTOR_FRAME_TRI && i == 3 && tilt.tail_tilt < 0.8) {
+                        tail_motor_output(); //이부분 수정관련해서 주의
+					/*else if( i == 3 ){
+                        output_throttle += constrain_float(output_throttle - throttle_down*100, -1, 1);
+                        //motors->output_motor_mask_not_intrusive(output_throttle, mask);*/
+                        mask = mask << 1;
 						continue;
 					}
 					output_throttle = 	constrain_float(
 										tilt.current_throttle + 
 										((mask & (uint8_t)remap.yaw_mask_a)?1.0:0.0) * remap.yaw_P_a * rudder_out + 
-										((mask & (uint8_t)remap.yaw_mask_b)?1.0:0.0) * remap.yaw_P_b * rudder_out + 
+										((mask & (uint8_t)remap.yaw_mask_b)?1.0:0.0) * remap.yaw_P_b * rudder_out +
 										((mask & (uint8_t)remap.pitch_mask_a)?1.0:0.0) * remap.pitch_P_a * elevator_out + 
 										((mask & (uint8_t)remap.pitch_mask_b)?1.0:0.0) * remap.pitch_P_b * elevator_out +
 										((mask & (uint8_t)remap.roll_mask_a)?1.0:0.0) * remap.roll_P_a * aileron_out + 
@@ -225,33 +284,34 @@ void QuadPlane::tiltrotor_continuous_update(void)
 			tiltrotor_slew_QSTABILIZE(0);
 		}
 		else{
-			tiltrotor_slew(0);
+			tiltrotor_slew(0);//이거빼고 다른거 다 지웠음
 		}
         return;
     }
 
+    //modification.
     if (assisted_flight &&
         transition_state >= TRANSITION_TIMER) {
         // we are transitioning to fixed wing - tilt the motors all
         // the way forward
-        if(remap.enable) {
-			tiltrotor_slew_elevator(1);
-		}
-		else{
-			tiltrotor_slew(1);
-		}
+           if (remap.enable) { 
+               tiltrotor_slew_elevator(1);//slew_transition 이였음
+           }
+	       else { 
+               tiltrotor_slew(1);
+                }
     } else {
         // until we have completed the transition we limit the tilt to
         // Q_TILT_MAX. Anything above 50% throttle gets
         // Q_TILT_MAX. Below 50% throttle we decrease linearly. This
         // relies heavily on Q_VFWD_GAIN being set appropriately.
         float settilt = constrain_float(SRV_Channels::get_output_scaled(SRV_Channel::k_throttle) / 50.0f, 0, 1);
-		if(remap.enable) {
-			tiltrotor_slew_elevator(settilt * tilt.max_angle_deg / 90.0f);
-		}
-		else{
-			tiltrotor_slew(settilt * tilt.max_angle_deg / 90.0f);
-		}
+	         if(remap.enable) {
+                    tiltrotor_slew_elevator(settilt * tilt.max_angle_deg / 90.0f); //modified slew_transition 이였음
+		     }
+	         else{
+		        	tiltrotor_slew(settilt * tilt.max_angle_deg / 90.0f);
+		       }
         
     }
 }
@@ -363,7 +423,7 @@ void QuadPlane::tilt_compensate_down(float *thrust, uint8_t num_motors)
     // control motor while preventing them trying to do roll and yaw
     // control while angled over. This greatly improves the stability
     // of the last phase of transitions
-    float tilt_threshold = (tilt.max_angle_deg/90.0f);
+    float tilt_threshold = (tilt.max_angle_deg/90.0f); //transition timer 이후에서만 발동되겠다.
     bool equal_thrust = (tilt.current_tilt > tilt_threshold);
 
     float tilt_total = 0;
@@ -464,7 +524,7 @@ void QuadPlane::tilt_compensate(float *thrust, uint8_t num_motors)
   to a fixed wing mode we use tilt_compensate_down, when going to a
   VTOL mode we use tilt_compensate_up
  */
-void QuadPlane::no_tilt_compensation(float *thrust, uint8_t num_motors)
+void QuadPlane::no_tilt_compensate(float *thrust, uint8_t num_motors)
 {
         return;
 }
@@ -494,9 +554,12 @@ void QuadPlane::tiltrotor_vectored_yaw(void)
 
     // calculate the basic tilt amount from current_tilt
     float base_output = zero_out + tilt.current_tilt * tilt.tilt_wings_fwd * (1 - zero_out);
+
+
+
     
     float tilt_threshold = (tilt.max_angle_deg/90.0f);
-    bool no_yaw = (tilt.current_tilt > tilt_threshold) && transition_state > TRANSITION_TIMER;
+    bool no_yaw = (tilt.current_tilt > tilt_threshold) && transition_state > TRANSITION_TIMER; //>=였다
 	float output_right = 0, output_left = 0;
 	
     if (no_yaw) {
