@@ -453,7 +453,7 @@ private:
     void tilt_compensate_up(float *thrust, uint8_t num_motors);
     void tilt_compensate_down(float *thrust, uint8_t num_motors);
     void tilt_compensate(float *thrust, uint8_t num_motors);
-	void no_tilt_compensation(float *thrust, uint8_t num_motors);
+	void no_tilt_compensate(float *thrust, uint8_t num_motors);
 	
 	
 	void tiltrotor_slew_QSTABILIZE(float newtilt);
