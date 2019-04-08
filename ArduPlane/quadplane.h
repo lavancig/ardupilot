@@ -496,7 +496,7 @@ private:
 	AP_Int8 late_tail;
 	
 	AP_Int8 scale_throttle;
-    
+    AP_Int8 throttle_down;
 public:
     void motor_test_output();
     MAV_RESULT mavlink_motor_test_start(mavlink_channel_t chan, uint8_t motor_seq, uint8_t throttle_type,
